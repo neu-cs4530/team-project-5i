@@ -15,6 +15,7 @@ export default class TextConversation {
 
   /**
    * Create a new Text Conversation
+   * 4/1/2022: Added support for sending direct and group messages by extending ChatMessage with a  new parameter direct
    *
    * @param socket socket to use to send/receive messages
    * @param authorName name of message author to use as sender
@@ -23,8 +24,25 @@ export default class TextConversation {
     this._socket = socket;
     this._authorName = authorName;
     this._socket.on('chatMessage', (message: ChatMessage) => {
-      message.dateCreated = new Date(message.dateCreated);
-      this.onChatMessage(message);
+      if (message.direct === undefined) {
+        console.log("%s Received a message",authorName);
+        message.dateCreated = new Date(message.dateCreated);
+        this.onChatMessage(message);
+      } else if (message.direct.length === 1) {
+        if (authorName === message.author || authorName === message.direct[0]) {
+          console.log("%s Received a direct message", authorName);
+          message.dateCreated = new Date(message.dateCreated);
+          this.onChatMessage(message);
+        }
+      } else if (message.direct.length > 1) {
+          for (let i = 0; i < message.direct.length; i += 1) {
+            if (authorName === message.author || authorName === message.direct[i]) {
+              console.log("%s Received a group messag", authorName);
+              message.dateCreated = new Date(message.dateCreated);
+              this.onChatMessage(message);
+            }
+          }
+        }
     });
   }
 
@@ -42,10 +60,33 @@ export default class TextConversation {
       body: message,
       author: this._authorName,
       dateCreated: new Date(),
+      direct: undefined
     };
     this._socket.emit('chatMessage', msg);
   }
 
+  
+  public sendDirectMessage(message: string, recipient: string) {
+    const msg: ChatMessage = {
+      sid: nanoid(),
+      body: message,
+      author: this._authorName,
+      dateCreated: new Date(),
+      direct: [recipient]
+    };
+    this._socket.emit('chatMessage', msg);
+  }
+  
+  public sendGroupMessage(message: string, recipients: string[]) {
+    const msg: ChatMessage = {
+      sid: nanoid(),
+      body: message,
+      author: this._authorName,
+      dateCreated: new Date(),
+      direct: recipients
+    };
+    this._socket.emit('chatMessage', msg);
+  }
   /**
    * Register an event listener for processing new chat messages
    * @param event
@@ -76,4 +117,5 @@ export type ChatMessage = {
   sid: string;
   body: string;
   dateCreated: Date;
+  direct: undefined | string[]; //4/1/2022: Added in a new parameter direct to the ChatMessage that allows support for the backend of direct and group messaging.
 };

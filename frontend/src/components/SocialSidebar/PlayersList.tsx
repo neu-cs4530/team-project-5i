@@ -1,5 +1,9 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import { background, Button, Checkbox, Heading, ListItem, OrderedList, Tooltip } from '@chakra-ui/react';
+import usePlayersInTown from '../../hooks/usePlayersInTown';
+import useCoveyAppState from '../../hooks/useCoveyAppState';
+import Player from '../../classes/Player';
+import PlayerName from './PlayerName';
 
 /**
  * Lists the current players in the town, along with the current town's name and ID
@@ -14,5 +18,75 @@ import React from 'react';
  * 
  */
 export default function PlayersInTownList(): JSX.Element {
-  return <></>
-}
+  var toCreateConveresationBtn = document.getElementById('createConveresationBtn');
+  const players = usePlayersInTown();
+  const currentPlayerName = players[players.length - 1].userName;
+  const {currentTownID, currentTownFriendlyName} = useCoveyAppState();
+  const sortPlayer = (player1: Player, player2: Player) => 
+  player1.userName.localeCompare(player2.userName, 'en', { numeric: true })
+  
+  // The ids of players who have been selected from the list
+  const [recipientNames, setrecipientNames] = useState<Array<string>>([]);
+
+  // If one or more players have been selected
+  // Show option to "create conversation" button
+  if(toCreateConveresationBtn !== null && recipientNames.length > 0){
+    toCreateConveresationBtn.style.visibility = 'visible';
+  }
+
+  // If no players have been selected
+  // Hide option to "create conversation" button
+  if(toCreateConveresationBtn !== null && recipientNames.length === 0){
+    toCreateConveresationBtn.style.visibility = 'hidden';
+  }
+
+  // This function will be triggered when a checkbox changes its state
+  const selectRecipient = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedRecipient = event.target.value;
+  
+    // Check if "recipientNames" contains "selectedRecipient"
+    // If true, this checkbox is already checked
+    // Otherwise, it is not selected yet
+    if (recipientNames.includes(selectedRecipient)) {
+      const newRecipientNames = recipientNames.filter((id) => id !== selectedRecipient);
+      setrecipientNames(newRecipientNames);
+    } else {
+      const newRecipientNames = [...recipientNames];
+      newRecipientNames.push(selectedRecipient);
+      setrecipientNames(newRecipientNames);
+    }
+  };
+
+
+  return (
+  <>
+  <Tooltip label={`Town ID: ${currentTownID}`}>
+    <Heading fontSize='15px' as='h2'>
+      Current town: {currentTownFriendlyName}
+      <br />
+      Current user: {currentPlayerName}
+      </Heading>
+    </Tooltip>
+    <br />
+    <OrderedList>
+      {[...players].filter(player => player.userName !== currentPlayerName).sort(sortPlayer).map((player) => 
+      <ListItem key={player.userName}>
+        <Checkbox 
+        name='playerCheckbox'
+        value={player.userName}
+        onChange={selectRecipient}
+        checked={recipientNames.includes(player.userName) ? true : false}
+        ><PlayerName player={player}/></Checkbox>
+        </ListItem>
+        )}
+        </OrderedList>
+        <Button 
+        id='createConveresationBtn' 
+        visibility={'hidden'}
+        marginTop={'15px'}
+        >Create Conversation</Button>
+        </>
+        )
+      }
+
+

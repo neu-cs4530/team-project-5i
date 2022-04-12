@@ -1,5 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Socket } from 'socket.io-client';
+import usePlayersInTown from '../hooks/usePlayersInTown';
+import Player from './Player';
 
 /**
  * A basic representation of a text conversation, bridged over a socket.io client
@@ -20,31 +22,43 @@ export default class TextConversation {
    * @param socket socket to use to send/receive messages
    * @param authorName name of message author to use as sender
    */
-  public constructor(socket: Socket, authorName: string) {
+   public constructor(socket: Socket, author: string) {
     this._socket = socket;
-    this._authorName = authorName;
+    this._authorName = author;
+    // const players = usePlayersInTown();
+    // const player = this.players.filter(p => p.userName === author)[0];
     this._socket.on('chatMessage', (message: ChatMessage) => {
-      if (message.direct === undefined) {
-        console.log("%s Received a message",authorName);
-        message.dateCreated = new Date(message.dateCreated);
-        this.onChatMessage(message);
-      } else if (message.direct.length === 1) {
-        if (authorName === message.author || authorName === message.direct[0]) {
-          console.log("%s Received a direct message", authorName);
+      // if (!player.blockedUsers?.includes(message.author)) {
+        if (message.direct === undefined) {
+          console.log("%s Received a message",this._authorName);
           message.dateCreated = new Date(message.dateCreated);
           this.onChatMessage(message);
-        }
-      } else if (message.direct.length > 1) {
-          for (let i = 0; i < message.direct.length; i += 1) {
-            if (authorName === message.author || authorName === message.direct[i]) {
-              console.log("%s Received a group messag", authorName);
+        } else if (message.direct.length === 1) {
+          if (this._authorName === message.author || this._authorName === message.direct[0]) {
+            console.log("%s Received a direct message", this._authorName);
+            message.dateCreated = new Date(message.dateCreated);
+            this.onChatMessage(message);
+          }
+        } else if (message.direct.length > 1) {
+            if (this._authorName === message.author) {
+              console.log("%s Received a group message", this._authorName);
               message.dateCreated = new Date(message.dateCreated);
               this.onChatMessage(message);
             }
+            else { 
+              for (let i = 0; i < message.direct.length; i += 1) {
+                if(this._authorName === message.direct[i]) {
+                  console.log("%s Received a group message", this._authorName);
+                  message.dateCreated = new Date(message.dateCreated);
+                  this.onChatMessage(message);
+                }
+              }
           }
         }
+      // }
     });
   }
+
 
   private onChatMessage(message: ChatMessage) {
     this._callbacks.forEach(cb => cb(message));
@@ -87,6 +101,7 @@ export default class TextConversation {
     };
     this._socket.emit('chatMessage', msg);
   }
+  
   /**
    * Register an event listener for processing new chat messages
    * @param event
@@ -117,5 +132,5 @@ export type ChatMessage = {
   sid: string;
   body: string;
   dateCreated: Date;
-  direct: undefined | string[]; //4/1/2022: Added in a new parameter direct to the ChatMessage that allows support for the backend of direct and group messaging.
+  direct: undefined | string[]; // 4/1/2022: Added in a new parameter direct to the ChatMessage that allows support for the backend of direct and group messaging.
 };

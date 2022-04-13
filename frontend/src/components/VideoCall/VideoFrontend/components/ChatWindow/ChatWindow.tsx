@@ -1,10 +1,14 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import ChatWindowHeader from './ChatWindowHeader/ChatWindowHeader';
+import DirectChatWindowHeader  from './ChatWindowHeader/DirectChatWindowHeader';
+import GroupChatWindowHeader  from './ChatWindowHeader/GroupChatWindowHeader';
 import ChatInput from './ChatInput/ChatInput';
 import clsx from 'clsx';
 import MessageList from './MessageList/MessageList';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
+import DirectMessageList from './MessageList/DirectMessageList';
+import GroupMessageList from './MessageList/GroupMessageList';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,6 +32,13 @@ const useStyles = makeStyles((theme: Theme) =>
       top: 0,
       'max-width': '250px'
     },
+    closeChatWindow: {
+      cursor: 'pointer',
+      display: 'flex',
+      background: 'transparent',
+      border: '0',
+      padding: '0.4em',
+    },
     hide: {
       display: 'none',
     },
@@ -41,11 +52,19 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ChatWindow() {
   const classes = useStyles();
   const { isChatWindowOpen, messages, conversation } = useChatContext();
+  const { setIsChatWindowOpen } = useChatContext();
+
 
   return (
     <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen })}>
       <ChatWindowHeader />
       <MessageList messages={messages} />
+      <br />
+      <DirectChatWindowHeader />
+      <DirectMessageList messages={messages} />
+      <br />
+      <GroupChatWindowHeader />
+      <GroupMessageList messages={messages} />
       <ChatInput conversation={conversation!} isChatWindowOpen={isChatWindowOpen} />
     </aside>
   );

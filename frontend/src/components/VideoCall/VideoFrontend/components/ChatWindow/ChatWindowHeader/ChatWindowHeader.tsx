@@ -3,6 +3,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import CloseIcon from '../../../icons/CloseIcon';
 
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
+import { Button } from '@chakra-ui/react';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -34,7 +35,9 @@ export default function ChatWindowHeader() {
 
   return (
     <div className={classes.container}>
-      <div className={classes.text}>Chat</div>
+      <div className={classes.text}>
+        Global Notification
+        </div>
       <button className={classes.closeChatWindow} onClick={() => setIsChatWindowOpen(false)}>
         <CloseIcon />
       </button>

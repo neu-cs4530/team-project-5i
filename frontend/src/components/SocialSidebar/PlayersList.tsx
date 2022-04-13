@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { background, Button, Checkbox, Heading, ListItem, OrderedList, Tooltip } from '@chakra-ui/react';
+import React, {useState } from 'react';
+import {Button, Checkbox, Heading, ListItem, OrderedList, Tooltip } from '@chakra-ui/react';
 import usePlayersInTown from '../../hooks/usePlayersInTown';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import Player from '../../classes/Player';
 import PlayerName from './PlayerName';
+import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useChatContext';
+
+
 
 /**
  * Lists the current players in the town, along with the current town's name and ID
@@ -24,9 +27,11 @@ export default function PlayersInTownList(): JSX.Element {
   const {currentTownID, currentTownFriendlyName} = useCoveyAppState();
   const sortPlayer = (player1: Player, player2: Player) => 
   player1.userName.localeCompare(player2.userName, 'en', { numeric: true })
+
   
   // The ids of players who have been selected from the list
   const [recipientNames, setrecipientNames] = useState<Array<string>>([]);
+
 
   // If one or more players have been selected
   // Show option to "create conversation" button
@@ -57,6 +62,19 @@ export default function PlayersInTownList(): JSX.Element {
     }
   };
 
+  const { isChatWindowOpen, setIsChatWindowOpen, conversation, hasUnreadMessages } = useChatContext();
+
+  const toggleChatWindow = () => {
+    // Create direct message
+    if(recipientNames.length === 1){
+      setIsChatWindowOpen(!isChatWindowOpen);
+    }
+    // Create group message
+    if(recipientNames.length > 1){
+      setIsChatWindowOpen(!isChatWindowOpen);
+    }
+  };
+
 
   return (
   <>
@@ -82,6 +100,7 @@ export default function PlayersInTownList(): JSX.Element {
         </OrderedList>
         <Button 
         id='createConveresationBtn' 
+        onClick={toggleChatWindow}
         visibility={'hidden'}
         marginTop={'15px'}
         >Create Conversation</Button>

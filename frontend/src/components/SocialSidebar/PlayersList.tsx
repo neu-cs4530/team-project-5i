@@ -67,11 +67,11 @@ export default function PlayersInTownList(): JSX.Element {
   const toggleChatWindow = () => {
     // Create direct message
     if(recipientNames.length === 1){
-      setIsChatWindowOpen(!isChatWindowOpen);
+      isChatWindowOpen.forEach(win => !win)
     }
     // Create group message
     if(recipientNames.length > 1){
-      setIsChatWindowOpen(!isChatWindowOpen);
+      isChatWindowOpen.forEach(win => !win)
     }
   };
 

@@ -11,7 +11,6 @@ import DirectMessageList from './MessageList/DirectMessageList';
 import GroupMessageList from './MessageList/GroupMessageList';
 import DirectChatInput from './ChatInput/DirectChatInput';
 import GroupChatInput from './ChatInput/GroupChatInput';
-import DirectConversation from './DirectConversation';
 import { ChatProvider } from '../ChatProvider';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,11 +61,20 @@ export default function DirectChatWindow({ occupants } :DirectChatProps) {
   let { isChatWindowOpen, messages, conversation } = useChatContext();
   const { setIsChatWindowOpen } = useChatContext();
 
+  if (conversation) {
+    return (
+      <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[1] })}>
+        <ChatWindowHeader />
+        <MessageList messages={messages} />
+        <ChatInput conversation={conversation[1]!} isChatWindowOpen={isChatWindowOpen[1]} />
+        <br />
+      </aside>
+    );
+  }
   return (
-    <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: isChatWindowOpen })}>
+    <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: isChatWindowOpen[1] })}>
       <ChatWindowHeader />
       <MessageList messages={messages} />
-      <ChatInput conversation={conversation!} isChatWindowOpen={isChatWindowOpen} />
       <br />
     </aside>
   );

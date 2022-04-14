@@ -15,6 +15,8 @@ export default class TextConversation {
 
   private _authorName: string;
 
+  private _occupants: string[] | null;
+
   /**
    * Create a new Text Conversation
    * 4/1/2022: Added support for sending direct and group messages by extending ChatMessage with a  new parameter direct
@@ -22,9 +24,10 @@ export default class TextConversation {
    * @param socket socket to use to send/receive messages
    * @param authorName name of message author to use as sender
    */
-   public constructor(socket: Socket, author: string) {
+   public constructor(socket: Socket, author: string, occupants :string[] | null) {
     this._socket = socket;
     this._authorName = author;
+    this._occupants = occupants;
     // const players = usePlayersInTown();
     // const player = this.players.filter(p => p.userName === author)[0];
     this._socket.on('chatMessage', (message: ChatMessage) => {
@@ -58,7 +61,6 @@ export default class TextConversation {
       // }
     });
   }
-
 
   private onChatMessage(message: ChatMessage) {
     this._callbacks.forEach(cb => cb(message));
@@ -124,6 +126,13 @@ export default class TextConversation {
    */
   public close(): void {
     this._socket.off('chatMessage');
+  }
+
+  /**
+   * Returns the occupants of the conversation
+   */
+  public occupants(): string[] | null {
+    return this._occupants;
   }
 }
 type MessageCallback = (message: ChatMessage) => void;

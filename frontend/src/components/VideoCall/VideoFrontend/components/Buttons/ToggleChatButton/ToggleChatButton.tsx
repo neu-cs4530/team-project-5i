@@ -63,7 +63,7 @@ export default function ToggleChatButton() {
   const { setIsBackgroundSelectionOpen } = useVideoContext();
 
   const toggleChatWindow = () => {
-    setIsChatWindowOpen(!isChatWindowOpen);
+    setIsChatWindowOpen([!isChatWindowOpen[0], false]);
     setIsBackgroundSelectionOpen(false);
   };
 
@@ -74,12 +74,16 @@ export default function ToggleChatButton() {
   }, [shouldAnimate]);
 
   useEffect(() => {
-    if (conversation && !isChatWindowOpen) {
-      const handleNewMessage = () => setShouldAnimate(true);
-      conversation.onMessageAdded(handleNewMessage);
-      return () => {
-        conversation.offMessageAdded(handleNewMessage);
-      };
+    if (conversation) {
+      for (let i = 0; i < conversation.length; i++) {
+        if (conversation[i] && !isChatWindowOpen[i]) {
+          const handleNewMessage = () => setShouldAnimate(true);
+          conversation[i].onMessageAdded(handleNewMessage);
+          return () => {
+            conversation[i].offMessageAdded(handleNewMessage);
+          };
+        }
+      }
     }
   }, [conversation, isChatWindowOpen]);
 

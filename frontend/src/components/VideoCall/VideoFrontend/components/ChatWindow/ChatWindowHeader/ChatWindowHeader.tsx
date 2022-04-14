@@ -38,7 +38,7 @@ export default function ChatWindowHeader() {
       <div className={classes.text}>
         Global Notification
         </div>
-      <button className={classes.closeChatWindow} onClick={() => setIsChatWindowOpen(false)}>
+      <button className={classes.closeChatWindow} onClick={() => setIsChatWindowOpen([false,false])}>
         <CloseIcon />
       </button>
     </div>

@@ -11,8 +11,10 @@ import DirectMessageList from './MessageList/DirectMessageList';
 import GroupMessageList from './MessageList/GroupMessageList';
 import DirectChatInput from './ChatInput/DirectChatInput';
 import GroupChatInput from './ChatInput/GroupChatInput';
-import DirectConversation from './DirectConversation';
 import DirectChatWindow from './DirectChatWindow';
+import GroupChatWindowConversations from './ChatWindowHeader/GroupChatWindowConversations';
+import DirectChatWindowConversations from './ChatWindowHeader/DirectChatWindowConversations';
+import ChatWindowHeaderWithClose from './ChatWindowHeader/ChatWindowHeaderWithClose';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,27 +47,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     hide: {
       display: 'none',
-    },
-    newWindow: {
-      background: '#FFFFFF',
-      zIndex: 1000,
-      display: 'flex',
-      flexDirection: 'column',
-      borderLeft: '1px solid #E4E7E9',
-      [theme.breakpoints.down('sm')]: {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        zIndex: 100,
-      },
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      top: 0,
-      'max-width': '250px'
-    },
+    }
   })
 );
 
@@ -78,20 +60,54 @@ export default function ChatWindow() {
   const { isChatWindowOpen, messages, conversation } = useChatContext();
   const { setIsChatWindowOpen } = useChatContext();
 
+  if (conversation) {
+    if (isChatWindowOpen[0]) { //Conversation Viewer
+      return (
+        <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[0] })}>
+          <ChatWindowHeader />
+          <MessageList messages={messages} />
+          <ChatInput conversation={conversation[0]!} isChatWindowOpen={isChatWindowOpen[0]} />
+          <br />
+          <DirectChatWindowHeader />
+          <DirectChatWindowConversations />
+          <br />
+          <GroupChatWindowHeader />
+          <GroupChatWindowConversations />
+          <br />
+        </aside>
+      );
+    } else if(isChatWindowOpen[1]) { //Group Window
+      return (
+        <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[1] })}>
+        <ChatWindowHeaderWithClose occupants={['test2','test3']}/>
+        <GroupMessageList messages={messages} />
+        <GroupChatInput conversation={conversation[1]!} isChatWindowOpen={isChatWindowOpen[1]} 
+        recipients={['test2','test3']}/>
+        <br />
+      </aside>
+      );
+    } else if(isChatWindowOpen[2]) { //DirectWindow
+      return (
+        <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[2] })}>
+        <ChatWindowHeaderWithClose occupants={['test2']}/>
+        <DirectMessageList messages={messages} />
+        <DirectChatInput conversation={conversation[2]!} isChatWindowOpen={isChatWindowOpen[2]} 
+          recipient='test1' />
+        <br />
+      </aside>
+      );
+    }
+  }
   return (
-    <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen })}>
+    <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[0] })}>
       <ChatWindowHeader />
       <MessageList messages={messages} />
-      <ChatInput conversation={conversation!} isChatWindowOpen={isChatWindowOpen} />
       <br />
       <DirectChatWindowHeader />
       <DirectMessageList messages={messages} />
-      <DirectChatInput conversation={conversation!} isChatWindowOpen={isChatWindowOpen} 
-      recipient='test1' />
       <br />
       <GroupChatWindowHeader />
       <GroupMessageList messages={messages} />
-      <GroupChatInput conversation={conversation!} isChatWindowOpen={isChatWindowOpen} recipients={['test2','test3']} />
       <br />
     </aside>
   );

@@ -32,6 +32,10 @@ const useStyles = makeStyles(() =>
   })
 );
 
+interface HeaderProps {
+  occupants :string[];
+}
+
 function toString(recipients:string[]) {
   let convoName = "";
   for (let i = 0; i < recipients.length; i++) {
@@ -43,7 +47,7 @@ function toString(recipients:string[]) {
   return convoName;
 }
 
-export default function ChatWindowHeader() {
+export default function ChatWindowHeader({occupants} :HeaderProps) {
   const classes = useStyles();
   const { setIsChatWindowOpen } = useChatContext();
   let { isChatWindowOpen, messages, conversation } = useChatContext();
@@ -55,15 +59,14 @@ export default function ChatWindowHeader() {
     </div>;
   }
 
-  let names = [['test1','test2'],
-               ['test2','test3'],
-               ['test3','test4','test5','test6'],
-               ['test4','test5']];
-
   return (
     <div className={classes.container}>
-      <div className={classes.text}>Group Message
+      <div className={classes.text}>{toString(occupants)}
       </div>
+      <button className={classes.closeChatWindow} onClick={() => setIsChatWindowOpen([true,false])}>
+        <CloseIcon />
+      </button>
+      
     </div>
   );
 }

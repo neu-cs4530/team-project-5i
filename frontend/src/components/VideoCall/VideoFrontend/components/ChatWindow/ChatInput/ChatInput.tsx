@@ -102,12 +102,14 @@ export default function ChatInput({ conversation, isChatWindowOpen }: ChatInputP
   const handleReturnKeyPress = (event: React.KeyboardEvent) => {
     if (!isMobile && event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
+      console.log(messageBody);
       handleSendMessage(messageBody);
     }
   };
 
   const handleSendMessage = (message: string) => {
     if (isValidMessage) {
+      console.log(message);
       conversation.sendMessage(message.trim());
       setMessageBody('');
     }

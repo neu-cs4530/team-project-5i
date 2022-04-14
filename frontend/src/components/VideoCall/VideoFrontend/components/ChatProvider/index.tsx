@@ -3,55 +3,72 @@ import TextConversation, { ChatMessage } from '../../../../../classes/TextConver
 import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
 
 type ChatContextType = {
-  isChatWindowOpen: boolean;
-  setIsChatWindowOpen: (isChatWindowOpen: boolean) => void;
+  isChatWindowOpen: boolean[];
+  setIsChatWindowOpen: (isChatWindowOpen: boolean[]) => void;
   hasUnreadMessages: boolean;
   messages: ChatMessage[];
-  conversation: TextConversation | null;
+  conversation: TextConversation[] | null;
 };
 
 export const ChatContext = createContext<ChatContextType>(null!);
 
 export const ChatProvider: React.FC = ({ children }) => {
   const { socket, userName } = useCoveyAppState();
-  const isChatWindowOpenRef = useRef(false);
-  const [isChatWindowOpen, setIsChatWindowOpen] = useState(false);
-  const [conversation, setConversation] = useState<TextConversation | null>(null);
+  const isChatWindowOpenRef = [useRef(false)];
+  const [isChatWindowOpen, setIsChatWindowOpen] = useState<boolean[]>([]);
+  const [conversation, setConversation] = useState<TextConversation[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
 
   useEffect(() => {
-    if (conversation) {
-      const handleMessageAdded = (message: ChatMessage) =>
-        setMessages(oldMessages => [...oldMessages, message]);
-      //TODO - store entire message queue on server?
-      // conversation.getMessages().then(newMessages => setMessages(newMessages.items));
-      conversation.onMessageAdded(handleMessageAdded);
-      return () => {
-        conversation.offMessageAdded(handleMessageAdded);
-      };
+    for (let i = 0; i < conversation.length; i++) {
+      if (conversation[i]) {
+        const handleMessageAdded = (message: ChatMessage) => 
+          setMessages(oldMessages => [...oldMessages, message]);
+        //TODO - store entire message queue on server?
+        // conversation.getMessages().then(newMessages => setMessages(newMessages.items));
+        conversation[i].onMessageAdded(handleMessageAdded);
+        return () => {
+          conversation[i].offMessageAdded(handleMessageAdded);
+        };
+      }
     }
   }, [conversation]);
 
   useEffect(() => {
     // If the chat window is closed and there are new messages, set hasUnreadMessages to true
-    if (!isChatWindowOpenRef.current && messages.length) {
-      setHasUnreadMessages(true);
+    for (let i = 0; i < isChatWindowOpenRef.length; i++) {
+      if (!isChatWindowOpenRef[i].current && messages.length) {
+        setHasUnreadMessages(true);
+      }
     }
   }, [messages]);
 
   useEffect(() => {
-    isChatWindowOpenRef.current = isChatWindowOpen;
-    if (isChatWindowOpen) setHasUnreadMessages(false);
+    for (let i = 0; i < isChatWindowOpenRef.length; i++) {
+      isChatWindowOpenRef[i].current = isChatWindowOpen[i];
+      if (isChatWindowOpen[i]) setHasUnreadMessages(false);
+    }
   }, [isChatWindowOpen]);
 
   useEffect(() => {
-    if (socket) {
-      const conv = new TextConversation(socket, userName);
-      setConversation(conv);
-      return () => {
-        conv.close();
-      };
+    if (conversation.length == 0) {
+      if (socket) {
+        const conv = new TextConversation(socket, userName, null);
+        setConversation([conv,conv,conv]);
+        return () => {
+          conv.close();
+        };
+      }
+    }
+    for (let i = 0; i < conversation.length; i++) {
+      if (socket) {
+        const conv = new TextConversation(socket, userName, null);
+        setConversation([conv,conv,conv]);
+        return () => {
+          conv.close();
+        };
+      }
     }
   }, [socket, userName, setConversation]);
 

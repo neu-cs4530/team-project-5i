@@ -83,7 +83,7 @@ export default function Menu(props: { buttonClassName?: string }) {
           <MenuItem
             onClick={() => {
               setIsBackgroundSelectionOpen(true);
-              setIsChatWindowOpen(false);
+              setIsChatWindowOpen([false,false]);
               setMenuOpen(false);
             }}
           >

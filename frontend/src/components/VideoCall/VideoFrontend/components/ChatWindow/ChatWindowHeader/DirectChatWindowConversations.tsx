@@ -6,12 +6,11 @@ import { Button, List, ListItem, OrderedList } from '@chakra-ui/react';
 import DirectChatWindow from '../DirectChatWindow';
 import RoomNameScreen from '../../PreJoinScreens/RoomNameScreen/RoomNameScreen';
 import ChatWindow from '../ChatWindow';
-import CloseIcon from '../../../icons/CloseIcon';
 
 const useStyles = makeStyles(() =>
   createStyles({
     container: {
-      height: '56px',
+      height: '300px',
       background: '#F4F4F6',
       borderBottom: '1px solid #E4E7E9',
       display: 'flex',
@@ -50,20 +49,29 @@ export default function ChatWindowHeader() {
 
   function openConvo(conversation :string[]) {
     return <div>
-      {setIsChatWindowOpen([false, true])}
+      {setIsChatWindowOpen([false, false, true])}
       <DirectChatWindow occupants={conversation}/>
     </div>;
   }
 
-  let names = [['test1','test2'],
-               ['test2','test3'],
-               ['test3','test4','test5','test6'],
-               ['test4','test5']];
+  let names = [['test1'],
+               ['test2'],
+               ['test3'],
+               ['test4']];
 
   return (
-    <div className={classes.container}>
-      <div className={classes.text}>Group Message
-      </div>
+    <div>
+      <List>
+        {[...names].map(
+        (name) =>
+          <ListItem key={name[0]}>
+            <br />
+            <Button onClick={() => openConvo(name)}>
+              {toString(name)}
+            </Button>
+          </ListItem>
+        )}
+      </List>
     </div>
   );
 }

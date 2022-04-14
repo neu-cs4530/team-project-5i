@@ -21,7 +21,7 @@ import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useC
  * 
  */
 export default function PlayersInTownList(): JSX.Element {
-  var toCreateConveresationBtn = document.getElementById('createConveresationBtn');
+  const toCreateConveresationBtn = document.getElementById('createConveresationBtn');
   const players = usePlayersInTown();
   const currentPlayerName = players[players.length - 1].userName;
   const {currentTownID, currentTownFriendlyName} = useCoveyAppState();
@@ -93,7 +93,7 @@ export default function PlayersInTownList(): JSX.Element {
         name='playerCheckbox'
         value={player.userName}
         onChange={selectRecipient}
-        checked={recipientNames.includes(player.userName) ? true : false}
+        checked={recipientNames.includes(player.userName)}
         ><PlayerName player={player}/></Checkbox>
         </ListItem>
         )}
@@ -101,8 +101,8 @@ export default function PlayersInTownList(): JSX.Element {
         <Button 
         id='createConveresationBtn' 
         onClick={toggleChatWindow}
-        visibility={'hidden'}
-        marginTop={'15px'}
+        visibility='hidden'
+        marginTop='15px'
         >Create Conversation</Button>
         </>
         )

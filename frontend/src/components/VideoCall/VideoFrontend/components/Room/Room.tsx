@@ -52,7 +52,7 @@ export default function Room() {
     >
       {/* <MainParticipant /> */}
       <ParticipantList />
-      <ChatWindow />
+      <ChatWindow/>
       <BackgroundSelectionDialog />
     </div>
   );

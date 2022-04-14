@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
+import { Button, List, ListItem, OrderedList } from '@chakra-ui/react';
+import DirectChatWindow from '../DirectChatWindow';
+import RoomNameScreen from '../../PreJoinScreens/RoomNameScreen/RoomNameScreen';
+import ChatWindow from '../ChatWindow';
 
 const useStyles = makeStyles(() =>
   createStyles({
     container: {
-      height: '56px',
+      height: '300px',
       background: '#F4F4F6',
       borderBottom: '1px solid #E4E7E9',
       display: 'flex',
@@ -27,13 +31,54 @@ const useStyles = makeStyles(() =>
   })
 );
 
+function toString(recipients:string[]) {
+  let convoName = "";
+  for (let i = 0; i < recipients.length; i++) {
+    convoName = convoName + recipients[i]
+    if (i !== recipients.length-1) {
+      convoName = convoName + ",";
+    }
+  }
+  return convoName;
+}
+
 export default function ChatWindowHeader() {
   const classes = useStyles();
   const { setIsChatWindowOpen } = useChatContext();
 
+  const [conversation, setConversation] = useState(['']);
+
+  function openConvo(conversation :string[]) {
+    setConversation(conversation);
+  }
+
+  useEffect(() => {
+    <div>{setIsChatWindowOpen(false)}
+      <DirectChatWindow occupants={conversation}/>
+    </div>
+  },[conversation]);
+
+  let names = [['test1','test2'],
+               ['test2','test3'],
+               ['test3','test4','test5','test6'],
+               ['test4','test5']];
+
   return (
     <div className={classes.container}>
-      <div className={classes.text}>Group Message</div>
+      <div className={classes.text}>Group Message
+      <List>
+        {[...names].map(
+        (name) =>
+          <ListItem key={name[0]}>
+            <br />
+            <Button onClick={() =>  openConvo(name)}>
+              {toString(name)}
+            </Button>
+          </ListItem>
+        )}
+      </List>
+      </div>
+      
     </div>
   );
 }

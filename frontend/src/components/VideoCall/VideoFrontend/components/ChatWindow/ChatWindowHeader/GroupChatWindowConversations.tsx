@@ -6,6 +6,7 @@ import { Button, List, ListItem, OrderedList } from '@chakra-ui/react';
 import DirectChatWindow from '../DirectChatWindow';
 import RoomNameScreen from '../../PreJoinScreens/RoomNameScreen/RoomNameScreen';
 import ChatWindow from '../ChatWindow';
+import { nanoid } from 'nanoid';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -33,7 +34,7 @@ const useStyles = makeStyles(() =>
 
 function toString(recipients:string[]) {
   let convoName = "";
-  for (let i = 0; i < recipients.length; i++) {
+  for (let i = 1; i < recipients.length; i++) {
     convoName = convoName + recipients[i]
     if (i !== recipients.length-1) {
       convoName = convoName + ",";
@@ -54,17 +55,26 @@ export default function ChatWindowHeader() {
     </div>;
   }
 
-  let names = [['test1','test2'],
-               ['test2','test3'],
-               ['test3','test4','test5','test6'],
-               ['test4','test5']];
+  /**
+   * Gets the names of the occupants in the conversation
+   */
+  let names:string[][] | null = [];
+  if (conversation) {
+    for (let i = 0; i < conversation?.length; i++) {
+      const newNames = conversation[i].occupants()?.sort();
+      if (conversation[i] && newNames && newNames.length > 2 && !names.includes(newNames)) {
+        console.log(newNames);
+        names.push(newNames);
+      }
+    }
+  }
 
   return (
     <div>
       <List>
         {[...names].map(
         (name) =>
-          <ListItem key={name[0]}>
+          <ListItem key={nanoid()}>
             <br />
             <Button onClick={() => openConvo(name)}>
               {toString(name)}

@@ -5,6 +5,7 @@ import useCoveyAppState from '../../hooks/useCoveyAppState';
 import Player from '../../classes/Player';
 import PlayerName from './PlayerName';
 import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useChatContext';
+import TextConversation from '../../classes/TextConversation';
 
 
 
@@ -23,25 +24,24 @@ import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useC
 export default function PlayersInTownList(): JSX.Element {
   const toCreateConveresationBtn = document.getElementById('createConveresationBtn');
   const players = usePlayersInTown();
-  const currentPlayerName = players[players.length - 1].userName;
-  const {currentTownID, currentTownFriendlyName} = useCoveyAppState();
+  const {currentTownID, currentTownFriendlyName, socket, userName} = useCoveyAppState();
+  const currentPlayerName = userName;
   const sortPlayer = (player1: Player, player2: Player) => 
   player1.userName.localeCompare(player2.userName, 'en', { numeric: true })
 
   
   // The ids of players who have been selected from the list
-  const [recipientNames, setrecipientNames] = useState<Array<string>>([]);
-
+  const [recipientNames, setrecipientNames] = useState<Array<string>>([userName]);
 
   // If one or more players have been selected
   // Show option to "create conversation" button
-  if(toCreateConveresationBtn !== null && recipientNames.length > 0){
+  if(toCreateConveresationBtn !== null && recipientNames.length > 1){
     toCreateConveresationBtn.style.visibility = 'visible';
   }
 
   // If no players have been selected
   // Hide option to "create conversation" button
-  if(toCreateConveresationBtn !== null && recipientNames.length === 0){
+  if(toCreateConveresationBtn !== null && recipientNames.length < 2){
     toCreateConveresationBtn.style.visibility = 'hidden';
   }
 
@@ -65,12 +65,39 @@ export default function PlayersInTownList(): JSX.Element {
   const { isChatWindowOpen, setIsChatWindowOpen, conversation, hasUnreadMessages } = useChatContext();
 
   const toggleChatWindow = () => {
+    console.log(recipientNames);
+    
+    if (socket) {
+      if (conversation) {
+        const names:string[][] | null = [[]];
+        for (let i = 0; i < conversation?.length; i += 1) { // Builds the list of all convo names
+          const newNames = conversation[i].occupants()?.sort();
+          if (conversation[i] && newNames) {
+            names.push(newNames);
+          }
+        }
+        let dup = false;
+        const newNames = recipientNames.sort();
+        for (let i = 0; i < conversation?.length; i += 1) { // Checks if we need a new convo for the current names
+          if (conversation[i] && newNames && names.includes(newNames)) {
+            dup = true;
+            break;
+          }
+        }
+        if (!dup) {
+          conversation?.push(new TextConversation(socket, userName, recipientNames));
+        }
+      }
+      
+    }
+   
     // Create direct message
-    if(recipientNames.length === 1){
+    if(recipientNames.length === 2) {
       isChatWindowOpen.forEach(win => !win)
     }
+
     // Create group message
-    if(recipientNames.length > 1){
+    if(recipientNames.length > 2){
       isChatWindowOpen.forEach(win => !win)
     }
   };
@@ -90,21 +117,23 @@ export default function PlayersInTownList(): JSX.Element {
       {[...players].filter(player => player.userName !== currentPlayerName).sort(sortPlayer).map((player) => 
       <ListItem key={player.userName}>
         <Checkbox 
-        name='playerCheckbox'
-        value={player.userName}
-        onChange={selectRecipient}
-        checked={recipientNames.includes(player.userName)}
-        ><PlayerName player={player}/></Checkbox>
-        </ListItem>
+          name='playerCheckbox'
+          value={player.userName}
+          onChange={selectRecipient}
+          checked={recipientNames.includes(player.userName)}
+          ><PlayerName player={player}/>
+        </Checkbox>
+      </ListItem>
         )}
-        </OrderedList>
-        <Button 
+    </OrderedList>
+    <Button 
         id='createConveresationBtn' 
         onClick={toggleChatWindow}
         visibility='hidden'
         marginTop='15px'
-        >Create Conversation</Button>
-        </>
+        >Create Conversation
+    </Button>
+  </>
         )
       }
 

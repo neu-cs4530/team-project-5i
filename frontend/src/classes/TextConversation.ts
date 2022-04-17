@@ -28,6 +28,7 @@ export default class TextConversation {
     this._socket = socket;
     this._authorName = author;
     this._occupants = occupants;
+    
     // const players = usePlayersInTown();
     // const player = this.players.filter(p => p.userName === author)[0];
     this._socket.on('chatMessage', (message: ChatMessage) => {

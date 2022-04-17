@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import TextConversation, { ChatMessage } from '../../../../../classes/TextConversation';
 import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
+import usePlayersInTown from '../../../../../hooks/usePlayersInTown';
 
 type ChatContextType = {
   isChatWindowOpen: boolean[];
@@ -14,11 +15,12 @@ export const ChatContext = createContext<ChatContextType>(null!);
 
 export const ChatProvider: React.FC = ({ children }) => {
   const { socket, userName } = useCoveyAppState();
-  const isChatWindowOpenRef = [useRef(false)];
-  const [isChatWindowOpen, setIsChatWindowOpen] = useState<boolean[]>([]);
-  const [conversation, setConversation] = useState<TextConversation[]>([]);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const isChatWindowOpenRef = [useRef(false)]; 
+  const [isChatWindowOpen, setIsChatWindowOpen] = useState<boolean[]>([]); //Boolean array here so that we can have multiple window options for our conversations
+  const [conversation, setConversation] = useState<TextConversation[]>([]); //Array form to allow for multiple conversations
+  const [messages, setMessages] = useState<ChatMessage[]>([]); //TODO might want to make this a 2D array for ease of multiple conversations
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+  const players = usePlayersInTown();
 
   useEffect(() => {
     for (let i = 0; i < conversation.length; i++) {
@@ -54,8 +56,10 @@ export const ChatProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (conversation.length == 0) {
       if (socket) {
-        const conv = new TextConversation(socket, userName, null);
-        setConversation([conv,conv,conv]);
+        const occupants:string[] = [];
+        players.forEach(p => occupants?.push(p.userName));
+        const conv = new TextConversation(socket, userName, occupants);
+        setConversation([conv]);
         return () => {
           conv.close();
         };
@@ -63,8 +67,10 @@ export const ChatProvider: React.FC = ({ children }) => {
     }
     for (let i = 0; i < conversation.length; i++) {
       if (socket) {
-        const conv = new TextConversation(socket, userName, null);
-        setConversation([conv,conv,conv]);
+        const occupants:string[] = [];
+        players.forEach(p => occupants?.push(p.userName));
+        const conv = new TextConversation(socket, userName, occupants);
+        setConversation([conv]);
         return () => {
           conv.close();
         };

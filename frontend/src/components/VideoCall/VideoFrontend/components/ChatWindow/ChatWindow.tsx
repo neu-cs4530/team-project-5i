@@ -61,27 +61,7 @@ export default function ChatWindow() {
   const { setIsChatWindowOpen } = useChatContext();
 
   if (conversation) {
-    const GroupWindow = (occupants :string[], convoIndex :integer) => {
-      (<aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[convoIndex] })}>
-        <ChatWindowHeaderWithClose occupants={occupants}/>
-        <GroupMessageList messages={messages} />
-        <GroupChatInput conversation={conversation[convoIndex]!} isChatWindowOpen={isChatWindowOpen[convoIndex]} 
-        recipients={occupants}/>
-        <br />
-      </aside>);
-    }
-
-    const DirectWindow = (occupants :string[], convoIndex :integer) => {
-      (<aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen  [convoIndex] })}>
-        <ChatWindowHeaderWithClose occupants={occupants}/>
-        <DirectMessageList messages={messages} />
-        <DirectChatInput conversation={conversation[convoIndex]!} isChatWindowOpen={isChatWindowOpen[convoIndex]} 
-            recipient={occupants}/>
-        <br />
-      </aside>);
-    }
     const currOccupants = conversation[currConversation].occupants();
-    console.log(currConversation);
     if (isChatWindowOpen[0]) { //Conversation Viewer
       return (
         <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[0] })}>
@@ -101,7 +81,7 @@ export default function ChatWindow() {
       return (
         <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[1] })}>
         <ChatWindowHeaderWithClose occupants={currOccupants}/>
-        <GroupMessageList messages={messages} />
+        <GroupMessageList messages={messages} conversation={conversation[currConversation]} />
         <GroupChatInput conversation={conversation[currConversation]!} isChatWindowOpen={isChatWindowOpen[1]} 
         recipients={currOccupants}/>
         <br />
@@ -111,7 +91,7 @@ export default function ChatWindow() {
       return (
         <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[2] })}>
         <ChatWindowHeaderWithClose occupants={currOccupants}/>
-        <DirectMessageList messages={messages} />
+        <DirectMessageList messages={messages} conversation={conversation[currConversation]}/>
         <DirectChatInput conversation={conversation[currConversation]!} isChatWindowOpen={isChatWindowOpen[2]} 
           recipient={currOccupants} />
         <br />
@@ -123,12 +103,6 @@ export default function ChatWindow() {
     <aside className={clsx(classes.chatWindowContainer, { [classes.hide]: !isChatWindowOpen[0] })}>
       <ChatWindowHeader />
       <MessageList messages={messages} />
-      <br />
-      <DirectChatWindowHeader />
-      <DirectMessageList messages={messages} />
-      <br />
-      <GroupChatWindowHeader />
-      <GroupMessageList messages={messages} />
       <br />
     </aside>
   );

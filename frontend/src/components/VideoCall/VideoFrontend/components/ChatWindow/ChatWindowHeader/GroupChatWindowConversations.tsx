@@ -70,7 +70,6 @@ export default function ChatWindowHeader() {
           }
           if (s1 === s2) {
             id = i;
-            console.log(id);
           }
         }
       }
@@ -90,7 +89,6 @@ export default function ChatWindowHeader() {
   if (conversation) {
     for (let i = 0; i < conversation?.length; i++) {
       const newNames = conversation[i].occupants()?.sort();
-      console.log('New Names: %s',newNames);
       let dup = false;
       if(newNames) {
         let s1 = '';
@@ -99,14 +97,12 @@ export default function ChatWindowHeader() {
         }
         
         for (let j = 0; j < names?.length; j += 1) {
-          console.log('Old Names: %s',names[j]);
           let s2 = '';
           for (let k = 0; k < names[j].length; k += 1) {
             s2 = s2 + names[j][k];
           }
 
           if (s1 === s2) {
-            console.log('Dup convo');
             dup = true;
           }
         }
@@ -119,7 +115,7 @@ export default function ChatWindowHeader() {
   
   return (
     <div>
-      <ConversationListScrollContainer conversations={conversation}>
+      <ConversationListScrollContainer conversations={names}>
       <List>
         {[...names].map(
         (name) =>

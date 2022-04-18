@@ -58,7 +58,7 @@ interface DirectChatProps {
 
 export default function DirectChatWindow({ occupants } :DirectChatProps) {
   const classes = useStyles();
-  let { isChatWindowOpen, messages, conversation } = useChatContext();
+  let { isChatWindowOpen, messages, conversation, currConversation } = useChatContext();
   const { setIsChatWindowOpen } = useChatContext();
 
   if (conversation) {

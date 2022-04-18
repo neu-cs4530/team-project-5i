@@ -42,7 +42,7 @@ const styles = createStyles({
 });
 
 interface ConversationListScrollContainerProps extends WithStyles<typeof styles> {
-  conversations: TextConversation[] | null;
+  conversations: string[][];
 }
 
 interface ConversationListScrollContainerState {

@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
 interface ChatInputProps {
   conversation: TextConversation;
   isChatWindowOpen: boolean;
-  recipient: string;
+  recipient: string[];
 }
 
 const ALLOWED_FILE_TYPES =
@@ -109,7 +109,7 @@ export default function ChatInput({ conversation, isChatWindowOpen, recipient }:
 
   const handleSendMessage = (message: string) => {
     if (isValidMessage) {
-      conversation.sendDirectMessage(message.trim(), recipient);
+      conversation.sendGroupMessage(message.trim(), recipient);
       setMessageBody('');
     }
   };

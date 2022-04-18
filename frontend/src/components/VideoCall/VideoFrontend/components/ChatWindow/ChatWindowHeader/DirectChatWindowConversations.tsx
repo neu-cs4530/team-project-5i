@@ -7,6 +7,8 @@ import DirectChatWindow from '../DirectChatWindow';
 import RoomNameScreen from '../../PreJoinScreens/RoomNameScreen/RoomNameScreen';
 import ChatWindow from '../ChatWindow';
 import { nanoid } from 'nanoid';
+import TextConversation from '../../../../../../classes/TextConversation';
+import ConversationListScrollContainer from '../MessageList/MessageListScrollContainer/ConversationListScrollContainer';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -46,38 +48,83 @@ function toString(recipients:string[]) {
 export default function ChatWindowHeader() {
   const classes = useStyles();
   const { setIsChatWindowOpen } = useChatContext();
-  let { isChatWindowOpen, messages, conversation } = useChatContext();
+  let { isChatWindowOpen, messages, conversation, setCurrConversation } = useChatContext();
 
-  function openConvo(conversation :string[]) {
+  function openConvo(conversation :string[], conversations :TextConversation[] | null) {
+    let id = 0;
+    let s1 = '';
+    if (conversations) {
+      for (let i = 0; i < conversation.length; i += 1) {
+        s1 += conversation[i];
+      }
+      for (let i = 0; i < conversations.length; i += 1) {
+        const occupants = conversations[i].occupants();
+        let s2 = '';
+        if (occupants) { 
+          for (let j = 0; j < occupants.length; j += 1) {
+            s2 += occupants[j];
+          }
+          if (s1 === s2) {
+            id = i;
+            console.log(id);
+          }
+        }
+      }
+    }
     return <div>
       {setIsChatWindowOpen([false, false, true])}
+      {setCurrConversation(id)}
       <DirectChatWindow occupants={conversation}/>
     </div>;
   }
 
   let names:string[][] | null = [];
   if (conversation) {
-    for (let i = 1; i < conversation?.length; i++) {
+    for (let i = 0; i < conversation?.length; i++) {
       const newNames = conversation[i].occupants()?.sort();
-      if (conversation[i] && newNames && newNames.length === 2 && !names.includes(newNames)) {
+      console.log('New Names: %s',newNames);
+      let dup = false;
+      if(newNames) {
+        let s1 = '';
+        for (let k = 0; k < newNames?.length; k += 1) {
+          s1 = s1 + newNames[k];
+        }
+        
+        for (let j = 0; j < names?.length; j += 1) {
+          console.log('Old Names: %s',names[j]);
+          let s2 = '';
+          for (let k = 0; k < names[j].length; k += 1) {
+            s2 = s2 + names[j][k];
+          }
+
+          if (s1 === s2) {
+            console.log('Dup convo');
+            dup = true;
+          }
+        }
+      }
+      if (conversation[i] && newNames && newNames.length == 2 && !dup && !names.includes(newNames)) {
         names.push(newNames);
       }
     }
   }
+  
 
   return (
     <div>
+      <ConversationListScrollContainer conversations={conversation}>
       <List>
         {[...names].map(
         (name) =>
           <ListItem key={nanoid()}>
             <br />
-            <Button onClick={() => openConvo(name)}>
+            <Button onClick={() => openConvo(name, conversation)}>
               {toString(name)}
             </Button>
           </ListItem>
         )}
       </List>
+      </ConversationListScrollContainer>
     </div>
   );
 }

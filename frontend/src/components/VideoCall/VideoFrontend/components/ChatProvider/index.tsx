@@ -9,6 +9,9 @@ type ChatContextType = {
   hasUnreadMessages: boolean;
   messages: ChatMessage[];
   conversation: TextConversation[] | null;
+  currConversation: integer;
+  setConversation: (conversation: TextConversation[]) => void;
+  setCurrConversation: (currConversation: integer) => void;
 };
 
 export const ChatContext = createContext<ChatContextType>(null!);
@@ -21,6 +24,7 @@ export const ChatProvider: React.FC = ({ children }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]); //TODO might want to make this a 2D array for ease of multiple conversations
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const players = usePlayersInTown();
+  const [currConversation, setCurrConversation] = useState<integer>(0);
 
   useEffect(() => {
     for (let i = 0; i < conversation.length; i++) {
@@ -42,6 +46,24 @@ export const ChatProvider: React.FC = ({ children }) => {
     for (let i = 0; i < isChatWindowOpenRef.length; i++) {
       if (!isChatWindowOpenRef[i].current && messages.length) {
         setHasUnreadMessages(true);
+      }
+    }
+    console.log('Received a message in index');
+    let participants:string[] = [];
+    if (messages.length > 0 && messages[messages.length-1].direct !== undefined) {
+      const message = messages[messages.length-1];
+      if (message.direct) {
+        participants = message.direct;
+      }
+      participants = participants.sort();
+      let newConvo = true;
+      for (let i = 0; i < conversation.length; i += 1) {
+        if(conversation[i].occupants() === participants) {
+          newConvo = false;
+        }
+      }
+      if (newConvo && socket && participants) {
+        conversation.push(new TextConversation(socket, userName, participants));
       }
     }
   }, [messages]);
@@ -70,7 +92,7 @@ export const ChatProvider: React.FC = ({ children }) => {
         const occupants:string[] = [];
         players.forEach(p => occupants?.push(p.userName));
         const conv = new TextConversation(socket, userName, occupants);
-        setConversation([conv]);
+        setConversation([conv]); 
         return () => {
           conv.close();
         };
@@ -86,6 +108,9 @@ export const ChatProvider: React.FC = ({ children }) => {
         hasUnreadMessages,
         messages,
         conversation,
+        currConversation,
+        setConversation,
+        setCurrConversation,
       }}>
       {children}
     </ChatContext.Provider>

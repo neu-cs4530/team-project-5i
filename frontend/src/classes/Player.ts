@@ -1,3 +1,5 @@
+import TextConversation from "./TextConversation";
+
 export default class Player {
   public location?: UserLocation;
 
@@ -8,6 +10,8 @@ export default class Player {
   public sprite?: Phaser.GameObjects.Sprite;
 
   public label?: Phaser.GameObjects.Text;
+
+  public conversations: TextConversation[] = [];
 
   constructor(id: string, userName: string, location: UserLocation) {
     this._id = id;

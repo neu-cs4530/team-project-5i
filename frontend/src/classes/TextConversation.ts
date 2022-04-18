@@ -1,7 +1,5 @@
 import { nanoid } from 'nanoid';
 import { Socket } from 'socket.io-client';
-import usePlayersInTown from '../hooks/usePlayersInTown';
-import Player from './Player';
 
 /**
  * A basic representation of a text conversation, bridged over a socket.io client

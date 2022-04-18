@@ -62,7 +62,7 @@ export default function PlayersInTownList(): JSX.Element {
     }
   };
 
-  const { isChatWindowOpen, setIsChatWindowOpen, conversation, hasUnreadMessages } = useChatContext();
+  const { isChatWindowOpen, setIsChatWindowOpen, setConversation, conversation, hasUnreadMessages } = useChatContext();
 
   const toggleChatWindow = () => {
     console.log(recipientNames);
@@ -76,19 +76,30 @@ export default function PlayersInTownList(): JSX.Element {
             names.push(newNames);
           }
         }
-        let dup = false;
         const newNames = recipientNames.sort();
-        for (let i = 0; i < conversation?.length; i += 1) { // Checks if we need a new convo for the current names
-          if (conversation[i] && newNames && names.includes(newNames)) {
-            dup = true;
-            break;
+        let dup = false;
+        if(newNames) {
+          let s1 = '';
+          for (let k = 0; k < newNames?.length; k += 1) {
+            s1 += newNames[k];
+          }
+          
+          for (let j = 0; j < names?.length; j += 1) {
+            let s2 = '';
+            for (let k = 0; k < names[j].length; k += 1) {
+              s2 += names[j][k];
+            }
+  
+            if (s1 === s2) {
+              dup = true;
+            }
           }
         }
         if (!dup) {
+          console.log('Pushed a new convo with %s', recipientNames[0])
           conversation?.push(new TextConversation(socket, userName, recipientNames));
         }
       }
-      
     }
    
     // Create direct message

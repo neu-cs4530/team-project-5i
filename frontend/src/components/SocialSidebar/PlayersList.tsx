@@ -23,6 +23,7 @@ import TextConversation from '../../classes/TextConversation';
  */
 export default function PlayersInTownList(): JSX.Element {
   const toCreateConveresationBtn = document.getElementById('createConveresationBtn');
+  const muteBtn = document.getElementById('muteBtn');
   const players = usePlayersInTown();
   const {currentTownID, currentTownFriendlyName, socket, userName} = useCoveyAppState();
   const currentPlayerName = userName;
@@ -35,16 +36,17 @@ export default function PlayersInTownList(): JSX.Element {
 
   // If one or more players have been selected
   // Show option to "create conversation" button
-  if(toCreateConveresationBtn !== null && recipientNames.length > 1){
+  if(toCreateConveresationBtn !== null && muteBtn !== null && recipientNames.length > 1){
     toCreateConveresationBtn.style.visibility = 'visible';
+    muteBtn.style.visibility = 'visible';
   }
 
   // If no players have been selected
   // Hide option to "create conversation" button
-  if(toCreateConveresationBtn !== null && recipientNames.length < 2){
+  if(toCreateConveresationBtn !== null && muteBtn !== null && recipientNames.length < 2){
     toCreateConveresationBtn.style.visibility = 'hidden';
+    muteBtn.style.visibility = 'hidden';
   }
-
   // This function will be triggered when a checkbox changes its state
   const selectRecipient = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedRecipient = event.target.value;
@@ -96,7 +98,7 @@ export default function PlayersInTownList(): JSX.Element {
           }
         }
         if (!dup) {
-          console.log('Pushed a new convo with %s', recipientNames[0])
+          // console.log('Pushed a new convo with %s', recipientNames[0])
           conversation?.push(new TextConversation(socket, userName, recipientNames));
         }
       }
@@ -113,6 +115,15 @@ export default function PlayersInTownList(): JSX.Element {
     }
   };
 
+const muteToggled = () => {
+  for(let i = 0; i < recipientNames.length; i += 1) {
+    for(let j = 0; j < players.length; j += 1) {
+      if(recipientNames[i] === players[i].userName) {
+        console.log("TODO");
+      }
+    }
+  }
+}
 
   return (
   <>
@@ -143,6 +154,13 @@ export default function PlayersInTownList(): JSX.Element {
         visibility='hidden'
         marginTop='15px'
         >Create Conversation
+    </Button>
+    <Button 
+        id='muteBtn' 
+        onClick={muteToggled}
+        visibility='hidden'
+        marginTop='15px'
+        >Toggle Mute on Selected
     </Button>
   </>
         )

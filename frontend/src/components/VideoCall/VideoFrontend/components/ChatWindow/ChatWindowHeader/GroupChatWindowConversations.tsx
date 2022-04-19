@@ -11,6 +11,7 @@ import usePlayersInTown from '../../../../../../hooks/usePlayersInTown';
 import useCoveyAppState from '../../../../../../hooks/useCoveyAppState';
 import TextConversation from '../../../../../../classes/TextConversation';
 import { CurrentCallContext } from 'twilio/lib/rest/preview/trusted_comms/currentCall';
+import CloseIcon from '../../../icons/CloseIcon';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -33,6 +34,10 @@ const useStyles = makeStyles(() =>
       border: '0',
       padding: '0.4em',
     },
+    row: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
   })
 );
 
@@ -52,7 +57,7 @@ export default function ChatWindowHeader() {
   const { setIsChatWindowOpen } = useChatContext();
   const players = usePlayersInTown();
   const { socket, userName, currentTownID } = useCoveyAppState();
-  let { isChatWindowOpen, messages, conversation, currConversation, setCurrConversation } = useChatContext();
+  let { isChatWindowOpen, messages, conversation, currConversation, setCurrConversation, setConversation } = useChatContext();
   
   function openConvo(conversation :string[], conversations :TextConversation[] | null) {
     let id = 0;
@@ -79,6 +84,34 @@ export default function ChatWindowHeader() {
       {setCurrConversation(id)}
       <DirectChatWindow occupants={conversation}/>
     </div>;
+  }
+
+  function closeConvo(conversation :string[], conversations :TextConversation[] | null) {
+
+    let s1 = '';
+    if (conversations) {
+      for (let i = 0; i < conversation.length; i += 1) {
+        s1 += conversation[i];
+      }
+      for (let i = 0; i < conversations.length; i += 1) {
+        const occupants = conversations[i].occupants();
+        let s2 = '';
+        if (occupants) { 
+          for (let j = 0; j < occupants.length; j += 1) {
+            s2 += occupants[j];
+          }
+          if (s1 === s2) {
+            console.log(i);
+            console.log(conversations[i].occupants());
+            conversations.splice(i,1);
+            return <div>
+              t
+              {setConversation(conversations)}
+            </div>
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -121,9 +154,14 @@ export default function ChatWindowHeader() {
         (name) =>
           <ListItem key={nanoid()}>
             <br />
-            <Button onClick={() => openConvo(name, conversation)}>
-              {toString(name)}
-            </Button>
+            <div className={classes.row}>
+              <Button onClick={() => openConvo(name, conversation)}>
+                {toString(name)}
+              </Button>
+              <Button className={classes.closeChatWindow}>
+                <CloseIcon />
+              </Button>
+            </div>
           </ListItem>
         )}
       </List>

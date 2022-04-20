@@ -13,6 +13,7 @@ import TextConversation from '../../../../../../classes/TextConversation';
 import { CurrentCallContext } from 'twilio/lib/rest/preview/trusted_comms/currentCall';
 import CloseIcon from '../../../icons/CloseIcon';
 
+
 const useStyles = makeStyles(() =>
   createStyles({
     container: {
@@ -41,12 +42,16 @@ const useStyles = makeStyles(() =>
   })
 );
 
+// Only display recepiants' names
 function toString(recipients:string[]) {
+  const {userName} = useCoveyAppState();
+  const currentPlayerName = userName;
   let convoName = "";
   for (let i = 0; i < recipients.length; i++) {
-    convoName = convoName + recipients[i]
-    if (i !== recipients.length-1) {
-      convoName = convoName + ",";
+    if(recipients[i] === currentPlayerName){
+    }
+    else{
+      convoName = convoName + recipients[i] + " "
     }
   }
   return convoName;
@@ -153,12 +158,23 @@ export default function ChatWindowHeader() {
         {[...names].map(
         (name) =>
           <ListItem key={nanoid()}>
-            <br />
             <div className={classes.row}>
-              <Button onClick={() => openConvo(name, conversation)}>
+              <Button 
+              height={'50px'}
+              background={'grey'}
+              marginTop={'10px'}
+              display={'block'}
+              textDecoration={'none'}
+              padding={'0 15px 00'}
+              textAlign={'left'}
+              onClick={() => openConvo(name, conversation)}>
                 {toString(name)}
               </Button>
-              <Button className={classes.closeChatWindow}>
+              <Button 
+              marginTop={'10px'}
+              height={'50px'}
+              onClick={() => closeConvo(name, conversation)}
+              className={classes.closeChatWindow}>
                 <CloseIcon />
               </Button>
             </div>

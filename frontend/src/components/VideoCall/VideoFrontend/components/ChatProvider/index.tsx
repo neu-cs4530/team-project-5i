@@ -44,7 +44,6 @@ export const ChatProvider: React.FC = ({ children }) => {
   }, [conversation]);
 
   useEffect(() => {
-    // TODO: Herschel - potentially here
     // If the chat window is closed and there are new messages, set hasUnreadMessages to true
     for (let i = 0; i < isChatWindowOpenRef.length; i++) {
       if (!isChatWindowOpenRef[i].current && messages.length) {

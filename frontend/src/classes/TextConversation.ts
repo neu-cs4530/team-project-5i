@@ -7,6 +7,18 @@ import { Socket } from 'socket.io-client';
  * to make it easier to use as a drop-in replacement.
  */
 export default class TextConversation {
+  get socket(): Socket {
+    return this._socket
+  }
+
+  get callbacks(): MessageCallback[]  {
+    return this._callbacks
+  }
+
+  get authorName(): string {
+    return this._authorName
+  }
+
   private _socket: Socket;
 
   private _callbacks: MessageCallback[] = [];

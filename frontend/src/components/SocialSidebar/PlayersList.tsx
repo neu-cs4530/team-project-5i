@@ -8,7 +8,6 @@ import useChatContext from '../VideoCall/VideoFrontend/hooks/useChatContext/useC
 import TextConversation from '../../classes/TextConversation';
 
 
-
 /**
  * Lists the current players in the town, along with the current town's name and ID
  * 
@@ -43,7 +42,7 @@ export default function PlayersInTownList(): JSX.Element {
 
   // If no players have been selected
   // Hide option to "create conversation" button
-  if(toCreateConveresationBtn !== null && muteBtn !== null && recipientNames.length < 2){
+  if(oCreateConveresationBtn !== null && muteBtn !== null && recipientNames.length < 2){
     toCreateConveresationBtn.style.visibility = 'hidden';
     muteBtn.style.visibility = 'hidden';
   }
@@ -64,10 +63,10 @@ export default function PlayersInTownList(): JSX.Element {
     }
   };
 
-  const { isChatWindowOpen, setIsChatWindowOpen, setConversation, conversation, hasUnreadMessages } = useChatContext();
+  const { isChatWindowOpen, setIsChatWindowOpen, conversation } = useChatContext();
 
   const toggleChatWindow = () => {
-    console.log(recipientNames);
+    setIsChatWindowOpen([!isChatWindowOpen[0], false]);
     
     if (socket) {
       if (conversation) {
@@ -139,7 +138,7 @@ const muteToggled = () => {
       {[...players].filter(player => player.userName !== currentPlayerName).sort(sortPlayer).map((player) => 
       <ListItem key={player.userName}>
         <Checkbox 
-          name='playerCheckbox'
+          id='playerCheckbox'
           value={player.userName}
           onChange={selectRecipient}
           checked={recipientNames.includes(player.userName)}

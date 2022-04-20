@@ -8,6 +8,17 @@ import { Socket } from 'socket.io-client';
  */
 export default class TextConversation {
 
+  get socket(): Socket {
+    return this._socket
+  }
+
+  get callbacks(): MessageCallback[]  {
+    return this._callbacks
+  }
+
+  get authorName(): string {
+    return this._authorName
+  }
 
   private _socket: Socket;
 

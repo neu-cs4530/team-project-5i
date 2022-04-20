@@ -9,9 +9,13 @@ import ChatWindow from '../ChatWindow';
 import { nanoid } from 'nanoid';
 import TextConversation from '../../../../../../classes/TextConversation';
 import ConversationListScrollContainer from '../MessageList/MessageListScrollContainer/ConversationListScrollContainer';
+import useCoveyAppState from '../../../../../../hooks/useCoveyAppState';
+import CloseIcon from '../../../icons/CloseIcon';
+
+
 
 const useStyles = makeStyles(() =>
-  createStyles({
+  createStyles({  
     container: {
       height: '300px',
       background: '#F4F4F6',
@@ -31,15 +35,23 @@ const useStyles = makeStyles(() =>
       border: '0',
       padding: '0.4em',
     },
+    row: {
+      display: 'flex',
+      flexDirection: 'row',
+    },
   })
 );
 
+// Only display recepiants' names
 function toString(recipients:string[]) {
+  const {userName} = useCoveyAppState();
+  const currentPlayerName = userName;
   let convoName = "";
   for (let i = 0; i < recipients.length; i++) {
-    convoName = convoName + recipients[i]
-    if (i !== recipients.length-1) {
-      convoName = convoName + ",";
+    if(recipients[i] === currentPlayerName){
+    }
+    else{
+      convoName = convoName + recipients[i] + " "
     }
   }
   return convoName;
@@ -47,8 +59,9 @@ function toString(recipients:string[]) {
 
 export default function ChatWindowHeader() {
   const classes = useStyles();
+  const [shouldAnimate, setShouldAnimate] = useState(false);
   const { setIsChatWindowOpen } = useChatContext();
-  let { isChatWindowOpen, messages, conversation, setCurrConversation } = useChatContext();
+  let { isChatWindowOpen, messages, conversation, setCurrConversation} = useChatContext();
 
   function openConvo(conversation :string[], conversations :TextConversation[] | null) {
     let id = 0;
@@ -104,7 +117,7 @@ export default function ChatWindowHeader() {
       }
     }
   }
-  
+
 
   return (
     <div>
@@ -113,10 +126,26 @@ export default function ChatWindowHeader() {
         {[...names].map(
         (name) =>
           <ListItem key={nanoid()}>
-            <br />
-            <Button onClick={() => openConvo(name, conversation)}>
-              {toString(name)}
-            </Button>
+            <div className={classes.row}>
+              <Button 
+              width={'150px'}
+              height={'50px'}
+              background={'grey'}
+              marginTop={'10px'}
+              display={'block'}
+              textDecoration={'none'}
+              padding={'0 15px 00'}
+              textAlign={'left'}
+              onClick={() => openConvo(name, conversation)}>
+                {toString(name)}
+                </Button>
+                <Button 
+                marginTop={'10px'}
+                height={'50px'}
+                className={classes.closeChatWindow}>
+                  <CloseIcon />
+                  </Button>
+                  </div>
           </ListItem>
         )}
       </List>

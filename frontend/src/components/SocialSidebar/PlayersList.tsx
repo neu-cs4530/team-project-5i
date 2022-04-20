@@ -42,7 +42,7 @@ export default function PlayersInTownList(): JSX.Element {
 
   // If no players have been selected
   // Hide option to "create conversation" button
-  if(oCreateConveresationBtn !== null && muteBtn !== null && recipientNames.length < 2){
+  if(toCreateConveresationBtn !== null && muteBtn !== null && recipientNames.length < 2){
     toCreateConveresationBtn.style.visibility = 'hidden';
     muteBtn.style.visibility = 'hidden';
   }

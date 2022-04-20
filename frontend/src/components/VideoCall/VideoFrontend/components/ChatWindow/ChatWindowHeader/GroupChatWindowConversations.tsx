@@ -159,7 +159,6 @@ export default function ChatWindowHeader() {
       }
     }
   }
-  // TODO: Herschel - update this button to actually remove a conversation
   return (
     <div>
       <ConversationListScrollContainer conversations={names}>

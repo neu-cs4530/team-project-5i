@@ -107,11 +107,9 @@ export default function ChatWindowHeader() {
             s2 += occupants[j];
           }
           if (s1 === s2) {
-
             if (!conversations[i]) {
               return;
             }
-
             console.log(i);
             console.log(conversations[i].occupants());
             let copyArr = [...conversations]
@@ -159,7 +157,6 @@ export default function ChatWindowHeader() {
       }
     }
   }
-  // TODO: Herschel - update this button to actually remove a conversation
   return (
     <div>
       <ConversationListScrollContainer conversations={names}>

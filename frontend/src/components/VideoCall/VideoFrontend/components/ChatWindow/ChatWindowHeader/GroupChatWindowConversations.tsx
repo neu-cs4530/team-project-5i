@@ -94,6 +94,10 @@ export default function ChatWindowHeader() {
   function closeConvo(conversation :string[], conversations :TextConversation[] | null) {
 
     let s1 = '';
+
+    console.log('Herschel - curConv:', conversation);
+    console.log('Herschel - allConvs:', conversations);
+
     if (conversations) {
       for (let i = 0; i < conversation.length; i += 1) {
         s1 += conversation[i];
@@ -106,12 +110,23 @@ export default function ChatWindowHeader() {
             s2 += occupants[j];
           }
           if (s1 === s2) {
+
+            if (!conversations[i]) {
+              return;
+            }
+
             console.log(i);
             console.log(conversations[i].occupants());
+            let copyArr = [...conversations]
+            copyArr.splice(i, 1);
             conversations.splice(i,1);
+
+            console.log('Herschel - occupants:', occupants);
+            console.log('Herschel - convos:', occupants);
             return <div>
               t
-              {setConversation(conversations)}
+              {setConversation(copyArr)}
+              {setCurrConversation(0)}
             </div>
           }
         }
@@ -150,7 +165,7 @@ export default function ChatWindowHeader() {
       }
     }
   }
-  
+  // TODO: Herschel - update this button to actually remove a conversation
   return (
     <div>
       <ConversationListScrollContainer conversations={names}>

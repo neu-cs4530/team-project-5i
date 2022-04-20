@@ -80,7 +80,9 @@ export default function ToggleChatButton() {
           const handleNewMessage = () => setShouldAnimate(true);
           conversation[i].onMessageAdded(handleNewMessage);
           return () => {
-            conversation[i].offMessageAdded(handleNewMessage);
+            if (conversation[i]) {
+              conversation[i].offMessageAdded(handleNewMessage);
+            }
           };
         }
       }

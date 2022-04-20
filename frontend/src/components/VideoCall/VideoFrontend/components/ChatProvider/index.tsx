@@ -35,19 +35,23 @@ export const ChatProvider: React.FC = ({ children }) => {
         // conversation.getMessages().then(newMessages => setMessages(newMessages.items));
         conversation[i].onMessageAdded(handleMessageAdded);
         return () => {
-          conversation[i].offMessageAdded(handleMessageAdded);
+          if (conversation[i]) {
+            conversation[i].offMessageAdded(handleMessageAdded);
+          }
         };
       }
     }
   }, [conversation]);
 
   useEffect(() => {
+    // TODO: Herschel - potentially here
     // If the chat window is closed and there are new messages, set hasUnreadMessages to true
     for (let i = 0; i < isChatWindowOpenRef.length; i++) {
       if (!isChatWindowOpenRef[i].current && messages.length) {
         setHasUnreadMessages(true);
       }
     }
+    // TODO: Herschel - block converswwations here
     console.log('Received a message in index');
     let participants:string[] = [];
     if (messages.length > 0 && messages[messages.length-1].direct !== undefined) {

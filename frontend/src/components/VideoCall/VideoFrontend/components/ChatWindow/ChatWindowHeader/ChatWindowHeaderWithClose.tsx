@@ -7,6 +7,8 @@ import DirectChatWindow from '../DirectChatWindow';
 import RoomNameScreen from '../../PreJoinScreens/RoomNameScreen/RoomNameScreen';
 import ChatWindow from '../ChatWindow';
 import CloseIcon from '../../../icons/CloseIcon';
+import useCoveyAppState from '../../../../../../hooks/useCoveyAppState';
+
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -36,12 +38,16 @@ interface HeaderProps {
   occupants :string[];
 }
 
+// Only display Recipients name
 function toString(recipients:string[]) {
+  const {userName} = useCoveyAppState();
+  const currentPlayerName = userName;
   let convoName = "";
   for (let i = 0; i < recipients.length; i++) {
-    convoName = convoName + recipients[i]
-    if (i !== recipients.length-1) {
-      convoName = convoName + ",";
+    if(recipients[i] === currentPlayerName){
+    }
+    else{
+      convoName = convoName + recipients[i] + " "
     }
   }
   return convoName;

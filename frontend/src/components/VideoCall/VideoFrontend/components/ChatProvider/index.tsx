@@ -51,7 +51,6 @@ export const ChatProvider: React.FC = ({ children }) => {
         setHasUnreadMessages(true);
       }
     }
-    // TODO: Herschel - block converswwations here
     console.log('Received a message in index');
     let participants:string[] = [];
     if (messages.length > 0 && messages[messages.length-1].direct !== undefined) {

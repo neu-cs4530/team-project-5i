@@ -95,9 +95,6 @@ export default function ChatWindowHeader() {
 
     let s1 = '';
 
-    console.log('Herschel - curConv:', conversation);
-    console.log('Herschel - allConvs:', conversations);
-
     if (conversations) {
       for (let i = 0; i < conversation.length; i += 1) {
         s1 += conversation[i];
@@ -120,9 +117,6 @@ export default function ChatWindowHeader() {
             let copyArr = [...conversations]
             copyArr.splice(i, 1);
             conversations.splice(i,1);
-
-            console.log('Herschel - occupants:', occupants);
-            console.log('Herschel - convos:', occupants);
             return <div>
               t
               {setConversation(copyArr)}

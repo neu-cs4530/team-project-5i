@@ -19,6 +19,7 @@ import ChatWindowHeaderWithClose from './ChatWindowHeader/ChatWindowHeaderWithCl
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     chatWindowContainer: {
+      width: '320px',
       background: '#FFFFFF',
       zIndex: 1000,
       display: 'flex',
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: 0,
       left: 0,
       top: 0,
-      'max-width': '250px'
+      'max-width': '320px'
     },
     closeChatWindow: {
       cursor: 'pointer',
@@ -68,10 +69,10 @@ export default function ChatWindow() {
           <ChatWindowHeader />
           <MessageList messages={messages} />
           <ChatInput conversation={conversation[0]!} isChatWindowOpen={isChatWindowOpen[0]} />
-          <br />
+
           <DirectChatWindowHeader />
           <DirectChatWindowConversations />
-          <br />
+          
           <GroupChatWindowHeader />
           <GroupChatWindowConversations />
           <br />

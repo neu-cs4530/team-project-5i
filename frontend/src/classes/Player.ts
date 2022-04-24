@@ -11,7 +11,8 @@ export default class Player {
 
   public label?: Phaser.GameObjects.Text;
 
-  public conversations: TextConversation[] = [];
+  // Keeps track of muted players by id
+  public mutedPlayersByName: string[] = [];
 
   constructor(id: string, userName: string, location: UserLocation) {
     this._id = id;

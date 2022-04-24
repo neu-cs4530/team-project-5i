@@ -40,8 +40,8 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
-services/townService/package-lock.json
-frontend/package-lock.json
+# services/townService/package-lock.json
+# frontend/package-lock.json
 
 # TypeScript v1 declaration files
 typings/
@@ -72,7 +72,7 @@ typings/
 
 # dotenv environment variables file
 .env
-.env.example
+# .env.example
 .env.local
 .env.*.local
 .env.development

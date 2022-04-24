@@ -35,7 +35,9 @@ export const ChatProvider: React.FC = ({ children }) => {
         // conversation.getMessages().then(newMessages => setMessages(newMessages.items));
         conversation[i].onMessageAdded(handleMessageAdded);
         return () => {
-          conversation[i].offMessageAdded(handleMessageAdded);
+          if (conversation[i]) {
+            conversation[i].offMessageAdded(handleMessageAdded);
+          }
         };
       }
     }

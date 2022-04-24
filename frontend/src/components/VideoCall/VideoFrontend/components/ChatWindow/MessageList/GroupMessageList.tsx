@@ -5,6 +5,7 @@ import MessageListScrollContainer from './MessageListScrollContainer/MessageList
 import TextMessage from './TextMessage/TextMessage';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import usePlayersInTown from '../../../../../../hooks/usePlayersInTown';
+import useCoveyAppState from '../../../../../../hooks/useCoveyAppState';
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -17,8 +18,19 @@ const getFormattedTime = (message?: ChatMessage) =>
 export default function MessageList({ messages, conversation }: MessageListProps) {
   const { room } = useVideoContext();
   const localParticipant = room!.localParticipant;
-
+  
+  const { userName } = useCoveyAppState();
   const players = usePlayersInTown();
+  const currentPlayer = players.find(p => p.userName === userName);
+
+  const newMessages = []
+  for (let i = 0; i < messages.length; i++) {
+    if (!currentPlayer?.mutedPlayersByName.includes(messages[i].author)) {
+      newMessages.push(messages[i]);
+    }
+  }
+  messages = newMessages;
+
   return (
     <MessageListScrollContainer messages={messages}>
       {messages.map((message, idx) => {

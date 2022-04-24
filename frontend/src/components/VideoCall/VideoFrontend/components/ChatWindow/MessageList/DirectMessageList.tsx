@@ -5,6 +5,7 @@ import MessageListScrollContainer from './MessageListScrollContainer/MessageList
 import TextMessage from './TextMessage/TextMessage';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import usePlayersInTown from '../../../../../../hooks/usePlayersInTown';
+import useCoveyAppState from '../../../../../../hooks/useCoveyAppState';
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -19,6 +20,16 @@ export default function MessageList({ messages, conversation }: MessageListProps
   const localParticipant = room!.localParticipant;
 
   const players = usePlayersInTown();
+  const { userName } = useCoveyAppState();
+  const currentPlayer = players.find(p => p.userName === userName);
+
+  const newMessages = []
+  for (let i = 0; i < messages.length; i++) {
+    if (!currentPlayer?.mutedPlayersByName.includes(messages[i].author)) {
+      newMessages.push(messages[i]);
+    }
+  }
+  messages = newMessages;
 
   return (
     <MessageListScrollContainer messages={messages}>
@@ -49,6 +60,7 @@ export default function MessageList({ messages, conversation }: MessageListProps
           const isLocalParticipant = localParticipant.identity === message.author;
 
           const profile = players.find(p => p.id == message.author);
+
 
           return (
             <React.Fragment key={message.sid}>

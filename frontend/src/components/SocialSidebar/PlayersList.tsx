@@ -119,8 +119,6 @@ export default function PlayersInTownList(): JSX.Element {
 
 const muteToggled = () => {
   
-  // Take
-  // recipientNames -> List of players to mute or unmute
 
   const currentPlayer = players.find(p => p.userName === currentPlayerName);
   

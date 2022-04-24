@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import {Button, Checkbox, Heading, ListItem, OrderedList, Tooltip } from '@chakra-ui/react';
 import usePlayersInTown from '../../hooks/usePlayersInTown';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
@@ -26,6 +26,7 @@ export default function PlayersInTownList(): JSX.Element {
   const players = usePlayersInTown();
   const {currentTownID, currentTownFriendlyName, socket, userName} = useCoveyAppState();
   const currentPlayerName = userName;
+  const [currentMutedPlayers, setCurrentMutedPlayers] = useState<string[]>([]); // Array form to allow for multiple conversations
   const sortPlayer = (player1: Player, player2: Player) => 
   player1.userName.localeCompare(player2.userName, 'en', { numeric: true })
 
@@ -56,10 +57,12 @@ export default function PlayersInTownList(): JSX.Element {
     if (recipientNames.includes(selectedRecipient)) {
       const newRecipientNames = recipientNames.filter((id) => id !== selectedRecipient);
       setrecipientNames(newRecipientNames);
+      console.log('Recipient name: ', recipientNames)
     } else {
       const newRecipientNames = [...recipientNames];
       newRecipientNames.push(selectedRecipient);
       setrecipientNames(newRecipientNames);
+      console.log('Recipient name: ', recipientNames)
     }
   };
 
@@ -115,14 +118,33 @@ export default function PlayersInTownList(): JSX.Element {
   };
 
 const muteToggled = () => {
+  
+
+  const currentPlayer = players.find(p => p.userName === currentPlayerName);
+  
+  if (!currentPlayer) {
+    return;
+  }
+
   for(let i = 0; i < recipientNames.length; i += 1) {
-    for(let j = 0; j < players.length; j += 1) {
-      if(recipientNames[i] === players[i].userName) {
-        console.log("TODO");
+    if (recipientNames[i] !== currentPlayer.userName) {
+      
+      if (currentPlayer.mutedPlayersByName.includes(recipientNames[i])) {
+        currentPlayer.mutedPlayersByName = currentPlayer.mutedPlayersByName.filter(ele => ele !== recipientNames[i]);
+        console.log('Removed player - Current muted list: ', currentPlayer.mutedPlayersByName);
+      }
+      else {
+        currentPlayer.mutedPlayersByName.push(recipientNames[i]);
+        console.log('Added player - Current muted list: ', currentPlayer.mutedPlayersByName);
       }
     }
   }
+  setCurrentMutedPlayers(currentPlayer.mutedPlayersByName);
 }
+
+  // useEffect(() => {
+  //   players.find(player =>player.userName === currentPlayerName)?.mutedPlayersByName
+  // }, [currentMutedPlayers]);
 
   return (
   <>
@@ -131,6 +153,8 @@ const muteToggled = () => {
       Current town: {currentTownFriendlyName}
       <br />
       Current user: {currentPlayerName}
+      <br />
+      Muted users: {currentMutedPlayers}
       </Heading>
     </Tooltip>
     <br />

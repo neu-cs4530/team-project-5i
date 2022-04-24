@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useRef, useState } from 'react';
+import Player from '../../../../../classes/Player';
 import TextConversation, { ChatMessage } from '../../../../../classes/TextConversation';
 import useCoveyAppState from '../../../../../hooks/useCoveyAppState';
 import usePlayersInTown from '../../../../../hooks/usePlayersInTown';
@@ -25,12 +26,14 @@ export const ChatProvider: React.FC = ({ children }) => {
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const players = usePlayersInTown();
   const [currConversation, setCurrConversation] = useState<integer>(0);
+  const currentPlayer = players.find(p => p.userName === userName);
 
   useEffect(() => {
     for (let i = 0; i < conversation.length; i++) {
       if (conversation[i]) {
         const handleMessageAdded = (message: ChatMessage) => 
-          setMessages(oldMessages => [...oldMessages, message]);
+            setMessages(oldMessages => [...oldMessages, message]);
+          
         //TODO - store entire message queue on server?
         // conversation.getMessages().then(newMessages => setMessages(newMessages.items));
         conversation[i].onMessageAdded(handleMessageAdded);
@@ -52,8 +55,13 @@ export const ChatProvider: React.FC = ({ children }) => {
     }
     console.log('Received a message in index');
     let participants:string[] = [];
+
     if (messages.length > 0 && messages[messages.length-1].direct !== undefined) {
       const message = messages[messages.length-1];
+      if (currentPlayer?.mutedPlayersByName.includes(message.author)) {
+        return;
+      }
+
       if (message.direct) {
         participants = message.direct;
       }

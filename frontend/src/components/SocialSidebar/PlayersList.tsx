@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {Button, Checkbox, Heading, ListItem, OrderedList, Tooltip } from '@chakra-ui/react';
 import usePlayersInTown from '../../hooks/usePlayersInTown';
 import useCoveyAppState from '../../hooks/useCoveyAppState';

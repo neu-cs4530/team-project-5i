@@ -26,7 +26,7 @@ export default class TextConversation {
 
   private _authorName: string;
 
-  private _occupants: string[] | null;
+  private _occupants: string[];
 
   /**
    * Create a new Text Conversation
@@ -35,7 +35,7 @@ export default class TextConversation {
    * @param socket socket to use to send/receive messages
    * @param authorName name of message author to use as sender
    */
-   public constructor(socket: Socket, author: string, occupants :string[] | null) {
+   public constructor(socket: Socket, author: string, occupants :string[]) {
     this._socket = socket;
     this._authorName = author;
     this._occupants = occupants;
@@ -143,7 +143,7 @@ export default class TextConversation {
   /**
    * Returns the occupants of the conversation
    */
-  public occupants(): string[] | null {
+  public occupants(): string[] {
     return this._occupants;
   }
 }

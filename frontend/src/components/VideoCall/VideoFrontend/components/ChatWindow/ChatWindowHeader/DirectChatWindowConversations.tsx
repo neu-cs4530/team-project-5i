@@ -60,7 +60,7 @@ function toString(recipients:string[]) {
 export default function ChatWindowHeader() {
   const classes = useStyles();
   const [shouldAnimate, setShouldAnimate] = useState(false);
-  const { setIsChatWindowOpen } = useChatContext();
+  const { setIsChatWindowOpen, setConversation } = useChatContext();
   let { isChatWindowOpen, messages, conversation, setCurrConversation} = useChatContext();
 
   function openConvo(conversation :string[], conversations :TextConversation[] | null) {
@@ -118,6 +118,41 @@ export default function ChatWindowHeader() {
     }
   }
 
+  function closeConvo(conversation :string[], conversations :TextConversation[] | null) {
+
+    let s1 = '';
+
+    if (conversations) {
+      for (let i = 0; i < conversation.length; i += 1) {
+        s1 += conversation[i];
+      }
+      for (let i = 0; i < conversations.length; i += 1) {
+        const occupants = conversations[i].occupants();
+        let s2 = '';
+        if (occupants) { 
+          for (let j = 0; j < occupants.length; j += 1) {
+            s2 += occupants[j];
+          }
+          if (s1 === s2) {
+            if (!conversations[i]) {
+              return;
+            }
+            console.log(i);
+            console.log(conversations[i].occupants());
+            let copyArr = [...conversations]
+            copyArr.splice(i, 1);
+            conversations.splice(i,1);
+            return <div>
+              t
+              {setConversation(copyArr)}
+              {setCurrConversation(0)}
+            </div>
+          }
+        }
+      }
+    }
+  }
+
 
   return (
     <div>
@@ -142,6 +177,7 @@ export default function ChatWindowHeader() {
                 <Button 
                 marginTop={'10px'}
                 height={'50px'}
+                onClick={() => closeConvo(name, conversation)}
                 className={classes.closeChatWindow}>
                   <CloseIcon />
                   </Button>

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
-import TextConversation from './TextConversation';
 import { mock} from 'jest-mock-extended';
 import { Socket } from 'socket.io-client';
+import TextConversation from './TextConversation';
 
 describe('TextConversation', () => {
     it('constructor should set the authorName property', () => {

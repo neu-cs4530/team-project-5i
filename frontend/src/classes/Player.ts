@@ -1,4 +1,3 @@
-import TextConversation from "./TextConversation";
 
 export default class Player {
   public location?: UserLocation;

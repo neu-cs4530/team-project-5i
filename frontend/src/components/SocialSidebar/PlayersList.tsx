@@ -117,34 +117,33 @@ export default function PlayersInTownList(): JSX.Element {
     }
   };
 
-const muteToggled = () => {
+  const muteToggled = () => {
   
+    const newRecipientNames = recipientNames.filter(name => name !== userName);
 
-  const currentPlayer = players.find(p => p.userName === currentPlayerName);
+    const currentPlayer = players.find(p => p.userName === currentPlayerName);
+    
+    if (!currentPlayer) {
+      return;
+    }
   
-  if (!currentPlayer) {
-    return;
-  }
-
-  for(let i = 0; i < recipientNames.length; i += 1) {
-    if (recipientNames[i] !== currentPlayer.userName) {
-      
-      if (currentPlayer.mutedPlayersByName.includes(recipientNames[i])) {
-        currentPlayer.mutedPlayersByName = currentPlayer.mutedPlayersByName.filter(ele => ele !== recipientNames[i]);
-        console.log('Removed player - Current muted list: ', currentPlayer.mutedPlayersByName);
-      }
-      else {
-        currentPlayer.mutedPlayersByName.push(recipientNames[i]);
-        console.log('Added player - Current muted list: ', currentPlayer.mutedPlayersByName);
+    for(let i = 0; i < recipientNames.length; i += 1) {
+      if (recipientNames[i] !== currentPlayer.userName) {
+        
+        if (currentPlayer.mutedPlayersByName.includes(recipientNames[i])) {
+          currentPlayer.mutedPlayersByName = currentPlayer.mutedPlayersByName.filter(ele => ele !== recipientNames[i]);
+          setCurrentMutedPlayers(currentPlayer.mutedPlayersByName);
+          console.log('Removed player - Current muted list: ', currentPlayer.mutedPlayersByName);
+        }
+        else {
+          const newMutedNames = [...newRecipientNames];
+          currentPlayer.mutedPlayersByName.push(recipientNames[i]);
+          setCurrentMutedPlayers(newMutedNames);
+          console.log('Added player - Current muted list: ', currentPlayer.mutedPlayersByName);
+        }
       }
     }
   }
-  setCurrentMutedPlayers(currentPlayer.mutedPlayersByName);
-}
-
-  // useEffect(() => {
-  //   players.find(player =>player.userName === currentPlayerName)?.mutedPlayersByName
-  // }, [currentMutedPlayers]);
 
   return (
   <>

@@ -49,3 +49,7 @@ The frontend will automatically re-compile and reload in your browser if you cha
 ### Utilizing Chat
 
 To utilize chat, go to the bottom left corner of the program and open up a chat window.  Then feel free to share your messages with other participants of the town.
+
+### App Deployment
+
+We deployed this app to Netlify at https://covey-town-with-chat.netlify.app/ utilizing Netlify to host the frontend, and Heroku for the backend
